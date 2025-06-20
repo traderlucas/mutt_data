@@ -84,7 +84,6 @@ class GetBulkCoinData:
 
     def process_data(self, date):
         data = self.do_request(date)
-        sleep(5)
 
         if data:
             data = { "date":date, "data":data}
