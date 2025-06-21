@@ -3,8 +3,7 @@ from abc import ABC, abstractmethod
 import logging
 import json
 from datetime import timedelta, datetime
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from time import  sleep
+from concurrent.futures import ThreadPoolExecutor
 
 logger = logging.getLogger(__name__)
 
@@ -42,16 +41,16 @@ class GetCoinData(DoRequest):
 
     def save_data_locally(self):
         data = self.get_data()
-        with open(f"temp_data_{self.coin}_{self.date}.json", "w", encoding="utf-8") as temp:
+        with open(f"data/data_for_{self.coin}_{self.date}.json", "w", encoding="utf-8") as temp:
             json.dump(data, temp, ensure_ascii=False, indent=2)
 
-class GetBulkCoinData:
+class GetBulkCoinData(DoRequest):
     def __init__(self, coin, start_date, end_date, max_workers=5):
         self.coin = coin
         self.start_date = start_date
         self.end_date = end_date
         self.max_workers = max_workers
-        self.file_name = f"{self.coin}_data_for_dates_{self.start_date}_to_{self.end_date}.jsonl"
+        self.file_name = f"data/{self.coin}_data_for_dates_{self.start_date}_to_{self.end_date}.jsonl"
         self.dates_list = self.date_range()
         self.url = f"https://api.coingecko.com/api/v3/coins/{coin}/history"
         self.headers = {
