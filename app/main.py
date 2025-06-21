@@ -1,15 +1,10 @@
-from app.utils import *
-
-
-def main():
-
-    valid_crypto = "https://www.coingecko.com/en/all-cryptocurrencies"
-
-    coin = input("Input a valid name of a cryptocurrency", )
-    date = input("Input a date in the dd-mm-yyyy format", )
+from extractor import *
+from cli_app import *
 
     
-
+def main():
+    crypto = get_crypto()
+    date = get_date()
 
 if __name__ == "__main__":
     main()
