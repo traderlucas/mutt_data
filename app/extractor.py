@@ -21,11 +21,18 @@ class GetCoinData(DoRequest):
     def __init__(self, coin, date):
         self.coin = coin
         self.date = date
+        self.file_name = f"app/data/{self.coin}_{self.date}.json"
         self.url = f"https://api.coingecko.com/api/v3/coins/{coin}/history?date={date}"
         self.headers = {
             "accept": "application/json",
             "x-cg-pro-api-key": API_TOKEN
         }
+
+    def __str__(self):
+        return f"Coin: {self.coin}, Date: {self.date}, File: {self.file_name}"
+    
+    def get_path(self):
+        return self.file_name
 
     def do_request(self):
         logging.info("Getting the data")
@@ -45,16 +52,22 @@ class GetCoinData(DoRequest):
 
     def save_data_locally(self):
         data = self.get_data()
-        with open(f"data/data_for_{self.coin}_{self.date}.json", "w", encoding="utf-8") as temp:
-            json.dump(data, temp, ensure_ascii=False, indent=2)
+        os.makedirs("app/data", exist_ok=True)
+        
+        if data:
+            data = { "date":self.date, "data":data}
+            with open(self.file_name, "w", encoding="utf-8") as temp:
+                json.dump(data, temp, ensure_ascii=False, indent=2)
+                logging.info(f"data_for_{self.date}_saved")
+
+
 
 class GetBulkCoinData(DoRequest):
-    def __init__(self, coin, start_date, end_date, max_workers=5):
+    def __init__(self, coin, start_date, end_date):
         self.coin = coin
         self.start_date = start_date
         self.end_date = end_date
-        self.max_workers = max_workers
-        self.file_name = f"data/{self.coin}_data_for_dates_{self.start_date}_to_{self.end_date}.jsonl"
+        self.file_name = f"app/data/{self.coin}_{self.start_date}_to_{self.end_date}.jsonl"
         self.dates_list = self.date_range()
         self.url = f"https://api.coingecko.com/api/v3/coins/{coin}/history"
         self.headers = {
@@ -62,7 +75,12 @@ class GetBulkCoinData(DoRequest):
             "x-cg-demo-api-key": API_TOKEN
         }
 
+    def __str__(self):
+        return f"Coin: {self.coin}, start_date: {self.start_date}, end_date: {self.start_date} File: {self.file_name}"
     
+    def get_path(self):
+        return self.file_name
+
     def date_range(self):
         lista = []
         current = datetime.strptime(self.start_date, "%d-%m-%Y")
@@ -87,6 +105,7 @@ class GetBulkCoinData(DoRequest):
 
     def process_data(self, date):
         data = self.do_request(date)
+        os.makedirs("app/data", exist_ok=True)
 
         if data:
             data = { "date":date, "data":data}
@@ -96,24 +115,14 @@ class GetBulkCoinData(DoRequest):
     
 
     def getting_and_saving_data(self):
-
         for date in self.dates_list:
             self.process_data(date)
 
 class GetBulkCoinDataInParallel(GetBulkCoinData):
-    def __init__(self, coin, start_date, end_date, max_workers=10):
-        super().__init__(coin, start_date, end_date, max_workers)
+    def __init__(self, coin, start_date, end_date, max_workers=5):
+        super().__init__(coin, start_date, end_date)
+        self.max_workers = max_workers
 
     def getting_and_saving_data(self):
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             executor.map(self.process_data, self.dates_list)
-
-
-# get_data = GetCoinData("bitcoin", "03-01-2025")
-# result = get_data.save_data_locally()
-
-# get_data = GetBulkCoinData("bitcoin", "01-01-2025", "30-01-2025")
-# get_data.getting_and_saving_data()
-
-get_data = GetBulkCoinDataInParallel("bitcoin", "01-01-2025", "30-01-2025")
-get_data.getting_and_saving_data()

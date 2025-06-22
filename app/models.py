@@ -5,19 +5,17 @@ Base = declarative_base()
 
 class CoinHistory(Base):
     __tablename__ = 'coin_history'
-    id = Column(Integer, primary_key=True)
-    coin_id = Column(String, nullable=False)
-    date = Column(Date, nullable=False)
+    coin_id = Column(String, primary_key=True, nullable=False)
+    date = Column(Date, primary_key=True, nullable=False)
     price_usd = Column(Numeric)
     raw_json = Column(JSON)
     __table_args__ = (UniqueConstraint("coin_id", "date"),)
 
 class CoinAggregate(Base):
     __tablename__ = 'coin_aggregates'
-    id = Column(Integer, primary_key=True)
-    coin_id = Column(String, nullable=False)
-    year = Column(Integer, nullable=False)
-    month = Column(Integer, nullable=False)
+    coin_id = Column(String, primary_key=True, nullable=False)
+    year = Column(Integer, primary_key=True, nullable=False)
+    month = Column(Integer, primary_key=True, nullable=False)
     max_price = Column(Numeric)
     min_price = Column(Numeric)
     __table_args__ = (UniqueConstraint("coin_id", "year", "month"),)
