@@ -19,8 +19,8 @@ class DoRequest(ABC):
 class GetBulkCoinData(DoRequest):
     def __init__(self, coin, start_date, end_date):
         self.coin = coin
-        self.start_date = start_date
-        self.end_date = end_date
+        self.start_date = self.transform_date(start_date)
+        self.end_date = self.transform_date(end_date)
         self.file_name = f"app/data/{self.coin}_{self.start_date}_to_{self.end_date}.jsonl"
         self.dates_list = self.date_range()
         self.url = f"https://api.coingecko.com/api/v3/coins/{coin}/history"
@@ -35,6 +35,10 @@ class GetBulkCoinData(DoRequest):
     def get_path(self):
         return self.file_name
 
+    def transform_date(self, date_string):
+        parsed_date = datetime.strptime(date_string, '%Y-%m-%d')
+        return datetime.strftime(parsed_date, '%d-%m-%Y')
+
     def date_range(self):
         lista = []
         current = datetime.strptime(self.start_date, "%d-%m-%Y")
@@ -47,7 +51,6 @@ class GetBulkCoinData(DoRequest):
         return lista
 
     def do_request(self, date):
-        logging.info("Getting the data")
         params = f"date={date}"
         try:
             response = requests.get(url=self.url, params=params, headers=self.headers)
@@ -65,7 +68,6 @@ class GetBulkCoinData(DoRequest):
             data = { "date":date, "data":data}
             with open(self.file_name, "a", encoding="utf-8") as output:
                 output.write(json.dumps(data) + "\n")
-                logging.info(f"data_for_{date}_saved")
     
 
     def getting_and_saving_data(self):
