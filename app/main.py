@@ -12,13 +12,13 @@ def main():
     extractor.getting_and_saving_data()
     data_path = extractor.get_path()
 
-    # persist = persist_data()
+    persist = persist_data()
 
-    # if persist:
-    #     uploader = DBUploader()
-    #     uploader.init_db()
-    #     uploader.process_file(data_path)
-    #     uploader.run_aggregation_sql()
+    if persist:
+        uploader = DBUploader()
+        uploader.init_db()
+        uploader.process_file(data_path)
+        uploader.run_aggregation_sql()
 
 
 
