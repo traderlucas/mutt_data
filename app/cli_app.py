@@ -2,17 +2,14 @@ from utils import *
 
 
 def get_crypto():
-    "valid_crypto https://www.coingecko.com/en/all-cryptocurrencies"
-
     while True:
-        coin_input = input("Please enter a crypto currency: ")
+        coin_input = input("Please enter a crypto currency: ").lower()
         if is_valid_crypto(coin_input):
             print(f"You entered a valid coin: {coin_input}")
             return(coin_input)
         else:
             print("Invalid coin. Please try again.")
             print("link with the valid coins https://www.coingecko.com/en/all-cryptocurrencies")
-    
 
 def get_start_date():
     while True:
@@ -35,4 +32,12 @@ def get_end_date(start_date):
             print("Remember the format is dd-mm-yyyy (e.g., 25-12-2024)")
 
 def persist_data():
-    pass
+    while True:
+        persist = input("Would you like to persist the data in a database (y/n): ")
+        if persist == "y":
+            print("Persisting data in postgres Database")
+            return True
+        else:
+            print("Exiting app, data not saved in Database")
+            return False
+    
