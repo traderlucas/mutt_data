@@ -1,4 +1,6 @@
+#!/bin/bash
+source .env 
 docker-compose up -d && \
+#source venv/bin/activate &&\
 pip install -r requirements.txt && \
-source .env && \
 python app/main.py
