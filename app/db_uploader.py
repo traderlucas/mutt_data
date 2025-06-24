@@ -34,8 +34,6 @@ class DBUploader:
                 raw_data = record["data"]
                 coin_id = raw_data.get("id", {})
                 price = raw_data.get("market_data", {}).get("current_price", {}).get("usd")
-                if not price:
-                    continue
                 date = datetime.strptime(date_str, "%d-%m-%Y").date()
                 self.insert_coin_history(coin_id, date, price, raw_data)
         self.session.commit()

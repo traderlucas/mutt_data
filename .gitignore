@@ -4,3 +4,4 @@ venv312
 test.json
 __pycache__
 app/data
+.vscode

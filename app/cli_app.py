@@ -11,7 +11,7 @@ def get_crypto():
             return coin_input
         else:
             logger.warning("Invalid coin entered.")
-            logger.info("Link with the valid coins: https://www.coingecko.com/en/all-cryptocurrencies")
+            logger.info("Valid coins are bitcoin, ethereum, tether, solana, cardano")
 
 def get_start_date():
     while True:

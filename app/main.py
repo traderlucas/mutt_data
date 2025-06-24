@@ -1,7 +1,6 @@
 from extractor import *
 from cli_app import *
 from db_uploader import *
-from datetime import datetime
 import logging
 
 logging.basicConfig(level=logging.INFO)
